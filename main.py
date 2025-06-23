@@ -19,7 +19,7 @@ with open("hand_landmarks_A.csv", mode="a", newline="") as file:
     # Write header row
     writer.writerow(["frame", "landmark", "x", "y", "z", "label"])  # Added 'label' column
 
-    i = 0  # Frame counter
+    i = 30  # Frame counter
     j=0 #index counter
     # Loop to capture frames
     while True:
