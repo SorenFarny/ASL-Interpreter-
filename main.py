@@ -2,6 +2,8 @@ import mediapipe as mp
 import cv2
 import csv
 
+
+
 # Initialize webcam
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)  # Set width
@@ -13,14 +15,14 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands()
 
 # Open CSV file for writing hand landmark data
-with open("hand_landmarks_A.csv", mode="a", newline="") as file:
+with open("hand_landmarks_Z.csv", mode="a", newline="") as file:
     writer = csv.writer(file)
 
     # Write header row
     writer.writerow(["frame", "landmark", "x", "y", "z", "label"])  # Added 'label' column
 
     i = 30  # Frame counter
-    j=0 #index counter
+    j=193 #index counter
     # Loop to capture frames
     while True:
         success, image = cap.read()
@@ -43,7 +45,7 @@ with open("hand_landmarks_A.csv", mode="a", newline="") as file:
                     i = 0
                     j+=1
                     for idx, landmark in enumerate(hand_landmarks.landmark):
-                        writer.writerow([j, idx, landmark.x, landmark.y, landmark.z, "B"
+                        writer.writerow([j, idx, landmark.x, landmark.y, landmark.z, "D"
                                                                                      ""])  # Labeling the row
 
         i += 1  # Increment frame counter

@@ -6,12 +6,13 @@ from keras.layers import Dense
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import pandas as pd
 
 # Load CSV Data
-df = pd.read_csv("hand_landmarks_A.csv")
+df = pd.read_csv("hand_landmarks_Z.csv")
 
-# Convert labels to numerical values (A → 0, B → 1)
-df["label"] = df["label"].map({"A": 0, "B": 1})
+# Convert labels to numerical values (A → 0, B → 1 ect)
+df["label"] = df["label"].map({"A": 0, "B": 1, "C": 2, "D":3})
 
 # Normalize landmark values (scaling between 0 and 1)
 scaler = MinMaxScaler()
@@ -65,11 +66,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
-    Dense(1, activation='sigmoid')                    # Output layer: binary classification
+    Dense(4, activation='softmax')                    # Output layer: binary classification
 ])
 
 # Compile the model
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
 
 # Train the model
 model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
