@@ -12,7 +12,7 @@ import pandas as pd
 df = pd.read_csv("hand_landmarks_Z.csv")
 
 # Convert labels to numerical values (A → 0, B → 1 ect)
-df["label"] = df["label"].map({"A": 0, "B": 1, "C": 2, "D":3})
+df["label"] = df["label"].map({"A": 0, "B": 1, "C": 2, "D":3, "E":4})
 
 # Normalize landmark values (scaling between 0 and 1)
 scaler = MinMaxScaler()
@@ -66,7 +66,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
-    Dense(4, activation='softmax')                    # Output layer: binary classification
+    Dense(5, activation='softmax')                    # Output layer: binary classification
 ])
 
 # Compile the model
