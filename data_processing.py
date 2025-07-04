@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
+import joblib
+
 
 # Load CSV Data
 df = pd.read_csv("hand_landmarks_Z.csv")
@@ -17,6 +19,8 @@ df["label"] = df["label"].map({"A": 0, "B": 1, "C": 2, "D":3, "E":4})
 # Normalize landmark values (scaling between 0 and 1)
 scaler = MinMaxScaler()
 df[["x", "y", "z"]] = scaler.fit_transform(df[["x", "y", "z"]])
+joblib.dump(scaler, "minmax_scaler.pkl")
+
 
 # Reshape Data for TensorFlow
 num_landmarks = 21
@@ -27,6 +31,7 @@ print(df)
 
 
 # Step 1: Group by frame and label, create input vectors
+df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 def preprocess_data(df):
     X = []
     y = []
@@ -57,12 +62,21 @@ def preprocess_data(df):
 X, y = preprocess_data(df)
 
 # Step 2: Normalize the features (optional but recommended)
+
+from collections import Counter
+print("Label distribution:", Counter(y))
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
-# Step 3: Split into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Save the scaler to use during inference
+joblib.dump(scaler, "scaler.pkl")
 
+# Step 3: Split into training and testing sets
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+)
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
@@ -78,4 +92,12 @@ model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y
 
 # Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)
+
+
+from sklearn.metrics import classification_report, confusion_matrix
+
+y_pred = model.predict(X_test).argmax(axis=1)
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
 print(f"Test Accuracy: {accuracy:.4f}")
+model.save("hand_model.keras")
