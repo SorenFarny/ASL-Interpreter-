@@ -1,89 +1,74 @@
-import mediapipe as mp
 import cv2
-import csv
-import pandas as pd
-from keras.models import load_model
 import numpy as np
+import pandas as pd
+from joblib import load
+from keras.models import load_model
+import mediapipe as mp
 
-# Load model
+# Load model and scalers
 model = load_model("hand_model.keras")
-
-
+minmax_scaler = load("minmax_scaler.pkl")
+standard_scaler = load("scaler.pkl")
 
 # Initialize webcam
 cap = cv2.VideoCapture(0)
-cap.set(3, 640)  # Set width
-cap.set(4, 480)  # Set height
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 # Initialize MediaPipe hands
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
-hands = mp_hands.Hands()
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.7)
 
+label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E"}
+
+print("🤖 Ready to recognize hand gestures. Press 'q' to quit.")
 
 while True:
-        success, image = cap.read()
-        if not success:
-            print("Failed to capture image")
-            break
+    success, image = cap.read()
+    if not success:
+        print("🚫 Failed to capture image")
+        break
 
-        # Convert image from BGR to RGB
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = hands.process(image_rgb)
 
-        # Process the image to detect hand landmarks
-        results = hands.process(image_rgb)
+    landmark_vector = []
 
-        import numpy as np
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            for idx in range(21):
+                lm = hand_landmarks.landmark[idx]
+                landmark_vector.extend([lm.x, lm.y, lm.z])
+            break  # Only process the first detected hand
 
-        landmark_vector = []
+    if len(landmark_vector) != 63:
+        print("⚠️ Incomplete or missing landmarks — skipping frame")
+        continue
 
-        if results.multi_hand_landmarks:
-            for hand_landmarks in results.multi_hand_landmarks:
-                # Sort and collect all 21 landmarks
-                for idx in range(21):  # Force only first 21 landmarks
-                    lm = hand_landmarks.landmark[idx]
-                    landmark_vector.extend([lm.x, lm.y, lm.z])  # Flat list: 63 values
+    # Step 1: reshape and add feature names for MinMaxScaler
+    landmarks_np = np.array(landmark_vector).reshape(21, 3)
+    landmarks_df = pd.DataFrame(landmarks_np, columns=["x", "y", "z"])
 
-                break  # Use only the first detected hand
-        print(landmark_vector)
-        if len(landmark_vector) != 63:
-            print("Incomplete or missing landmarks — skipping frame")
-            continue  # Skip this frame
+    # Step 2: scale with MinMaxScaler
+    landmarks_minmax = minmax_scaler.transform(landmarks_df)
 
-        from joblib import load
-        # Load scalers
-        minmax_scaler = load("minmax_scaler.pkl")
-        standard_scaler = load("scaler.pkl")
+    # Step 3: flatten and scale with StandardScaler
+    flat_input = landmarks_minmax.flatten().reshape(1, -1)
+    final_input = standard_scaler.transform(flat_input)
 
-        # Step 1: shape (21, 3)
-        landmarks_np = np.array(landmark_vector).reshape(21, 3)
+    # Step 4: prediction
+    prediction = model.predict(final_input)
+    predicted_class = np.argmax(prediction, axis=1)[0]
+    gesture = label_map[predicted_class]
 
-        # Step 2: MinMax scaling
-        landmarks_minmax = minmax_scaler.transform(landmarks_np)
+    print("🧠 Probabilities:", prediction)
+    print("🖐️ Predicted gesture:", gesture)
 
-        # Step 3: flatten to shape (1, 63)
-        input_array = landmarks_minmax.flatten().reshape(1, -1)
-
-        # Step 4: StandardScaler transform
-        input_array = standard_scaler.transform(input_array)
-
-
-        scaler = load("scaler.pkl")
-        input_array = scaler.transform(input_array)
-
-        prediction = model.predict(input_array)
-        predicted_class = np.argmax(prediction, axis=1)[0]
-
-        label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E"}
-        #print(input_array)
-        print("Probabilities:", model.predict(input_array))
-        print("Predicted gesture:", label_map[predicted_class])
-
-        cv2.imshow("Hand Tracking", image)
-        # Exit when 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            #print(df)
-            break
+    # Show camera feed
+    cv2.imshow("Hand Tracking", image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
 # Release resources
 cap.release()
