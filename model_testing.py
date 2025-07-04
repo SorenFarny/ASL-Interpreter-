@@ -20,7 +20,7 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.7)
 
-label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E"}
+label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5:"F"}
 
 print("🤖 Ready to recognize hand gestures. Press 'q' to quit.")
 
@@ -62,8 +62,8 @@ while True:
     predicted_class = np.argmax(prediction, axis=1)[0]
     gesture = label_map[predicted_class]
 
-    print("🧠 Probabilities:", prediction)
-    print("🖐️ Predicted gesture:", gesture)
+    print(" Probabilities:", prediction)
+    print(" Predicted gesture:", gesture)
 
     # Show camera feed
     cv2.imshow("Hand Tracking", image)
