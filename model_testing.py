@@ -20,14 +20,14 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.7)
 
-label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5:"F"}
+label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5:"F", 6:"G"}
 
-print("🤖 Ready to recognize hand gestures. Press 'q' to quit.")
+print(" Ready to recognize hand gestures. Press 'q' to quit.")
 
 while True:
     success, image = cap.read()
     if not success:
-        print("🚫 Failed to capture image")
+        print(" Failed to capture image")
         break
 
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -43,7 +43,7 @@ while True:
             break  # Only process the first detected hand
 
     if len(landmark_vector) != 63:
-        print("⚠️ Incomplete or missing landmarks — skipping frame")
+        print(" Incomplete or missing landmarks — skipping frame")
         continue
 
     # Step 1: reshape and add feature names for MinMaxScaler
