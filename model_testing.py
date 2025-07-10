@@ -20,7 +20,7 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.7)
 
-label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5:"F", 6:"G", 7:"H", 8:"I", 9:"J"}
+label_map = {0: "A", 1: "B", 2: "C", 3: "D", 4: "E", 5:"F", 6:"G", 7:"H", 8:"I", 9:"J" ,10:"K"}
 
 print(" Ready to recognize hand gestures. Press 'q' to quit.")
 
