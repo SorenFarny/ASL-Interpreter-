@@ -14,7 +14,9 @@ import joblib
 df = pd.read_csv("hand_landmarks_Z.csv")
 
 # Convert labels to numerical values (A → 0, B → 1 ect)
-df["label"] = df["label"].map({"A": 0, "B": 1, "C": 2, "D":3, "E":4, "F" :5 ,"G": 6, "H": 7, "I":8, "J":9, "K" :10, "L": 11})
+df["label"] = df["label"].map({ "A": 0,"B": 1,"C": 2, "D": 3,"E": 4,"F": 5,"G": 6,"H": 7,"I": 8,"J": 9,"K": 10,"L": 11,"M": 12,"N": 13,"O": 14,"P": 15,"Q": 16,"R": 17,"S": 18, "T": 19,
+"U": 20, "V": 21, "W": 22,"X": 23,"Y": 24,"Z": 25
+})
 
 # Normalize landmark values (scaling between 0 and 1)
 scaler = MinMaxScaler()
@@ -61,7 +63,7 @@ def preprocess_data(df):
 # Preprocess the data
 X, y = preprocess_data(df)
 
-# Step 2: Normalize the features (optional but recommended)
+# Step 2: Normalize the features
 
 from collections import Counter
 print("Label distribution:", Counter(y))
@@ -80,7 +82,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
-    Dense(12, activation='softmax')                    # Output layer: binary classification
+    Dense(15, activation='softmax')                    # Output layer: binary classification
 ])
 
 # Compile the model
