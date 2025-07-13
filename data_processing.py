@@ -11,7 +11,7 @@ import joblib
 
 
 # Load CSV Data
-df = pd.read_csv("hand_landmarks_Z.csv")
+df = pd.read_csv("D:\Soren\hand_landmarks_Z.csv")
 
 # Convert labels to numerical values (A → 0, B → 1 ect)
 df["label"] = df["label"].map({ "A": 0,"B": 1,"C": 2, "D": 3,"E": 4,"F": 5,"G": 6,"H": 7,"I": 8,"J": 9,"K": 10,"L": 11,"M": 12,"N": 13,"O": 14,"P": 15,"Q": 16,"R": 17,"S": 18, "T": 19,
@@ -82,7 +82,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
-    Dense(16, activation='softmax')                    # Output layer: binary classification
+    Dense(18, activation='softmax')                    # Output layer: binary classification
 ])
 
 # Compile the model
