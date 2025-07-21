@@ -23,7 +23,7 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_c
 label_map = {
     0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",
     10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",
-    19:"T",20:"U",21:"V",22:"W",23:"X",24:"Z"}
+    19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z"}
 
 print(" Ready to recognize hand gestures. Press 'q' to quit.")
 
@@ -64,9 +64,12 @@ while True:
     prediction = model.predict(final_input)
     predicted_class = np.argmax(prediction, axis=1)[0]
     gesture = label_map[predicted_class]
+    # Draw the prediction on the frame
+    cv2.putText(image, f"Gesture: {gesture}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2, cv2.LINE_AA)
 
-    print(" Probabilities:", prediction)
-    print(" Predicted gesture:", gesture)
+   # print(" Probabilities:", prediction)
+   # print(" Predicted gesture:", gesture)
 
     # Show camera feed
     cv2.imshow("Hand Tracking", image)

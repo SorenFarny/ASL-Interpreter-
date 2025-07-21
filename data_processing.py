@@ -82,7 +82,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = Sequential([
     Dense(128, activation='relu', input_shape=(63,)),  # Input layer: 63 features
     Dense(64, activation='relu'),                     # Hidden layer
-    Dense(18, activation='softmax')                    # Output layer: binary classification
+    Dense(26, activation='softmax')                    # Output layer: binary classification
 ])
 
 # Compile the model
