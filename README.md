@@ -1,0 +1,1 @@
+This project builds an end-to-end system that recognizes static American Sign Language (ASL) letters using hand landmarks captured via a webcam. It integrates MediaPipe, OpenCV, and a custom-trained neural network to classify gestures in real time.
