@@ -22,7 +22,7 @@ with open("D:\Soren\hand_landmarks_Z.csv", mode="a", newline="") as file:
     writer.writerow(["frame", "landmark", "x", "y", "z", "label"])  # Added 'label' column
 
     i = 30  # Frame counter
-    j=1792 #index counter
+    j=2110 #index counter
     # Loop to capture frames
     while True:
         success, image = cap.read()
@@ -45,7 +45,7 @@ with open("D:\Soren\hand_landmarks_Z.csv", mode="a", newline="") as file:
                     i = 0
                     j+=1
                     for idx, landmark in enumerate(hand_landmarks.landmark):
-                        writer.writerow([j, idx, landmark.x, landmark.y, landmark.z, "Z"
+                        writer.writerow([j, idx, landmark.x, landmark.y, landmark.z, "G"
                                                                                      ""])  # Labeling the row
 
         i += 1  # Increment frame counter
