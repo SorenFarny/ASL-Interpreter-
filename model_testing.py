@@ -46,7 +46,7 @@ while True:
             break  # Only process the first detected hand
 
     if len(landmark_vector) != 63:
-        print(" Incomplete or missing landmarks — skipping frame")
+        #print(" Incomplete or missing landmarks — skipping frame")
         continue
 
     # Step 1: reshape and add feature names for MinMaxScaler
